@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>VAANI — The forecast that answers. The warning that interrupts.</title>
+  <meta name="description" content="Conversational weather intelligence for India. SIH26068 · MoES · IISER Bhopal."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif&display=swap"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body data-page="Home">
+  <div id="site-nav"></div>
+  <main>
+    <section class="wrap hero">
+      <div>
+        <p class="kicker">SIH26068 · MoES · Disaster Management</p>
+        <h1>VAANI</h1>
+        <p class="tag">The forecast that answers.<br/>The warning that interrupts.</p>
+        <p class="muted" style="max-width:36rem;margin-top:1.2rem;line-height:1.6">
+          Conversational weather intelligence for India. Ask in Hindi or English, by voice.
+          Official-style warnings are quoted verbatim before any routine answer.
+          Climate is a thirty-year memory, not a vibe. Built for the IISER Bhopal internal hackathon.
+        </p>
+        <div class="row">
+          <a class="btn" href="ask.html?demo=1&lang=hi">Open the console</a>
+          <a class="btn ghost" href="pitch.html">Present the pitch</a>
+        </div>
+        <p class="subtle" style="margin-top:1.2rem">Team VAANI · IISER Bhopal · B.Tech EECS, first year</p>
+      </div>
+      <aside>
+        <div class="card" id="campus">
+          <p class="kicker">Live at campus</p>
+          <p class="muted" style="margin-top:.8rem">Loading IISER Bhopal…</p>
+        </div>
+        <div class="card" style="margin-top:.8rem">
+          <p class="kicker">The question that wins the room</p>
+          <p style="font-family:var(--display);font-size:1.6rem;margin:.7rem 0">सीहोर में अगले दो दिन बारिश होगी क्या?</p>
+          <p class="muted" style="font-size:.9rem">Judge demo auto-arms a labelled cyclone overlay — never faked as live IMD.</p>
+          <p style="margin-top:.8rem"><a href="ask.html?demo=1&lang=hi">Ask this now →</a></p>
+        </div>
+      </aside>
+    </section>
+    <section class="band">
+      <div class="wrap" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;padding:1.1rem 0">
+        <div>
+          <p class="kicker">Jury pack</p>
+          <p class="muted" style="margin:.2rem 0 0">Demo, deck, speaker script. Use this in the room.</p>
+        </div>
+        <div class="row" style="margin:0">
+          <a class="btn" href="ask.html?demo=1&lang=hi">Live demo</a>
+          <a class="btn ghost" href="pitch.html">Pitch</a>
+          <a class="btn ghost" href="brief.html">Script</a>
+        </div>
+      </div>
+    </section>
+    <section class="wrap">
+      <p class="kicker">The last mile</p>
+      <h2 style="font-size:2.2rem;max-width:40rem">India already forecasts. People still cannot ask.</h2>
+      <div class="grid g3" style="margin-top:1.6rem">
+        <article class="card"><h3>Scattered truth</h3><p class="muted">Mausam, nowcast PDFs, cyclone bulletins, AWS pages. A farmer should not have to know the portal.</p></article>
+        <article class="card"><h3>Paraphrase is unsafe</h3><p class="muted">A general assistant that softens a cyclone warning is a safety failure. VAANI quotes it.</p></article>
+        <article class="card"><h3>Climate is in the title</h3><p class="muted">Most teams will ship a chatbot. We shipped a thirty-year memory next to the forecast.</p></article>
+      </div>
+    </section>
+  </main>
+  <div id="site-foot"></div>
+  <script src="js/places.js"></script>
+  <script src="js/vaani.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (async () => {
+      const place = VAANI.byName("IISER Bhopal");
+      const el = document.getElementById("campus");
+      try {
+        const b = await VAANI.forecast(place);
+        el.innerHTML = `<p class="kicker">Live at campus</p>
+          <div style="display:flex;justify-content:space-between;align-items:end;margin-top:.7rem">
+            <div><p style="font-family:var(--display);font-size:1.5rem;margin:0">${place.name}</p>
+            <p class="muted">${b.daily[0] ? VAANI.rainClass(b.daily[0].precip).en : ""}</p></div>
+            <p style="font-family:var(--display);font-size:3rem;margin:0" class="num">${Math.round(b.current.temp)}\u00b0</p>
+          </div>
+          <p class="mono muted" style="margin-top:1rem">${Math.round(b.current.humidity)}% RH \u00b7 ${Math.round(b.current.wind)} km/h \u00b7 today ${b.daily[0] ? b.daily[0].precip.toFixed(0) : "\u2014"} mm</p>
+          <p class="subtle" style="margin-top:.6rem">${b.model}</p>`;
+      } catch (e) {
+        el.innerHTML = `<p class="kicker">Live at campus</p><p class="muted">Forecast feed is quiet. Open Ask anyway.</p>`;
+      }
+    })();
+  </script>
+</body>
+</html>
