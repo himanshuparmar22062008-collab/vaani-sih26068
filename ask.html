@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ask VAANI</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif&display=swap"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body data-page="Ask">
+  <div id="site-nav"></div>
+  <main class="wrap ask">
+    <section class="card console" id="box">
+      <div class="bar">
+        <div>
+          <p style="font-family:var(--display);font-size:1.2rem;margin:0">Ask VAANI</p>
+          <p class="subtle">Warning-first weather voice</p>
+        </div>
+        <button id="en">EN</button>
+        <button id="hi">हिं</button>
+        <span style="flex:1"></span>
+        <button data-role="citizen" class="on">Citizen</button>
+        <button data-role="farmer">Farmer</button>
+        <button data-role="officer">Officer</button>
+        <button data-role="fisher">Fisher</button>
+        <button id="demo">Judge demo</button>
+      </div>
+      <div id="banner" class="banner" hidden>Judge demo is armed. A labelled cyclone overlay will interrupt the next forecast — never presented as a live IMD bulletin.</div>
+      <div class="msgs" id="msgs"></div>
+      <form class="composer" id="form">
+        <button class="icon" type="button" id="mic" title="Speak">mic</button>
+        <textarea id="q" rows="1" placeholder="सीहोर में कल बारिश होगी क्या?"></textarea>
+        <button class="btn" type="submit">Send</button>
+      </form>
+    </section>
+    <aside id="side" class="card">
+      <p class="kicker">Provenance</p>
+      <p style="font-family:var(--display);font-size:1.6rem">Nothing retrieved yet</p>
+      <p class="muted">Ask a village name. This rail shows slots, issue time, model, and latency.</p>
+    </aside>
+  </main>
+  <div id="site-foot"></div>
+  <script src="js/places.js"></script>
+  <script src="js/vaani.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    let lang = params.get("lang") === "en" ? "en" : (params.get("lang") === "hi" ? "hi" : "hi");
+    let role = "citizen";
+    let demo = params.get("demo") === "1" || params.get("demo") === "true";
+    let pending = false;
+    const $ = (id) => document.getElementById(id);
+    function paintToggles() {
+      $("en").className = lang === "en" ? "on" : "";
+      $("hi").className = lang === "hi" ? "on" : "";
+      $("demo").className = demo ? "armed" : "";
+      $("banner").hidden = !demo;
+    }
+    $("en").onclick = () => { lang = "en"; paintToggles(); };
+    $("hi").onclick = () => { lang = "hi"; paintToggles(); };
+    $("demo").onclick = () => { demo = !demo; paintToggles(); };
+    document.querySelectorAll("[data-role]").forEach((b) => {
+      b.onclick = () => {
+        role = b.dataset.role;
+        document.querySelectorAll("[data-role]").forEach((x) => x.classList.toggle("on", x === b));
+      };
+    });
+    paintToggles();
+
+    async function ask(text) {
+      const q = text.trim();
+      if (!q || pending) return;
+      pending = true;
+      $("q").value = "";
+      $("msgs").insertAdjacentHTML("beforeend", `<div class="bubble me">${q}</div>`);
+      const wait = document.createElement("p");
+      wait.className = "subtle";
+      wait.textContent = "Resolving place · retrieving NWP · checking warnings…";
+      $("msgs").appendChild(wait);
+      const t0 = Date.now();
+      try {
+        const sl = VAANI.slots(q, lang);
+        const bundle = await VAANI.forecast(sl.place);
+        const warning = demo ? VAANI.demoWarning(sl.place) : VAANI.deriveWarning(sl.place, bundle.daily);
+        const out = VAANI.compose(sl.place, sl, bundle, sl.intent === "climate" ? null : warning, role);
+        const ms = Date.now() - t0;
+        wait.remove();
+        let html = "";
+        if (warning && sl.intent !== "climate") {
+          html += `<div class="warn"><p class="kicker" style="color:var(--alert)">${warning.demo ? "Demo overlay · not live IMD" : "Active warning"}</p>
+            <p><strong>${lang === "hi" ? warning.titleHi : warning.title}</strong></p>
+            <pre style="white-space:pre-wrap;font:inherit">${lang === "hi" ? warning.verbatimHi : warning.verbatim}</pre></div>`;
+        }
+        html += `<div class="bubble bot">${out.answer}${out.advisory ? `<p style="color:var(--accent);margin-top:.7rem">${out.advisory}</p>` : ""}<p class="subtle num">${ms} ms</p></div>`;
+        $("msgs").insertAdjacentHTML("beforeend", html);
+        $("side").innerHTML = `<p class="kicker">Resolved slots</p>
+          <p><span class="chip acc">${sl.place.name}</span> <span class="chip">${sl.timeWindow}</span> <span class="chip">${sl.variable}</span> <span class="chip">${sl.intent}</span> <span class="chip">${sl.language}</span></p>
+          <p class="mono muted">${sl.place.lat.toFixed(3)} N · ${sl.place.lon.toFixed(3)} E · ${sl.place.state}</p>
+          <p class="kicker" style="margin-top:1rem">Now</p>
+          <p style="font-family:var(--display);font-size:2.6rem;margin:.2rem 0" class="num">${Math.round(bundle.current.temp)}°</p>
+          <p class="mono muted">${Math.round(bundle.current.humidity)}% RH · ${Math.round(bundle.current.wind)} km/h</p>
+          <p class="kicker" style="margin-top:1rem">Provenance</p>
+          <p class="num" style="font-family:var(--display);font-size:2rem">${ms}<span class="muted" style="font-size:.9rem"> ms</span></p>
+          <p class="mono muted">Issued ${bundle.issuedAt.replace("T"," ")} IST<br/>${bundle.model}<br/>Grid ~0.25°</p>
+          <p class="subtle" style="margin-top:.6rem">A judge can cross-check this against the public IMD district bulletin.</p>`;
+      } catch (e) {
+        wait.textContent = e.message || "VAANI could not answer.";
+        wait.style.color = "var(--alert)";
+      } finally {
+        pending = false;
+        $("msgs").scrollTop = $("msgs").scrollHeight;
+      }
+    }
+    $("form").onsubmit = (e) => { e.preventDefault(); ask($("q").value); };
+    $("mic").onclick = () => {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert("Voice is not available in this browser. Type the question."); return; }
+      const rec = new SR();
+      rec.lang = lang === "hi" ? "hi-IN" : "en-IN";
+      rec.onresult = (ev) => ask(ev.results[0][0].transcript);
+      rec.start();
+    };
+    if (demo) {
+      setTimeout(() => ask(lang === "en" ? "Will it rain over Sehore in the next two days?" : "सीहोर में अगले दो दिन बारिश होगी क्या?"), 400);
+    } else {
+      $("msgs").innerHTML = `<p style="font-family:var(--display);font-size:1.5rem">Ask in your language. The warning comes first.</p>
+        <p class="muted">Try IISER Bhopal or Sehore. Turn on Judge demo to show the labelled cyclone interrupt.</p>`;
+    }
+  </script>
+</body>
+</html>

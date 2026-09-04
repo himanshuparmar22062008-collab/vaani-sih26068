@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>VAANI Alerts</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif&display=swap"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body data-page="Alerts">
+  <div id="site-nav"></div>
+  <main class="wrap" style="padding:2.4rem 0 3.5rem">
+    <p class="kicker">National board</p>
+    <h1 style="font-size:2.4rem">Active field, twelve desks</h1>
+    <p class="muted" style="max-width:36rem">Live NWP for IMD-relevant cities. Cards light up when rainfall crosses official intensity classes. This is the push path — warnings that do not wait to be asked.</p>
+    <div id="board" class="grid g3" style="margin-top:1.6rem"><p class="muted">Loading desks…</p></div>
+  </main>
+  <div id="site-foot"></div>
+  <script src="js/places.js"></script>
+  <script src="js/vaani.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (async () => {
+      const names = window.VAANI_HOTSPOTS;
+      const cards = await Promise.all(names.map(async (n) => {
+        const place = VAANI.byName(n);
+        try {
+          const b = await VAANI.forecast(place);
+          return { place, b, w: VAANI.deriveWarning(place, b.daily) };
+        } catch {
+          return { place, b: null, w: null };
+        }
+      }));
+      document.getElementById("board").innerHTML = cards.map(({ place, b, w }) => `
+        <article class="card">
+          <div style="display:flex;justify-content:space-between;gap:1rem">
+            <div><h3 style="margin:0">${place.name}</h3><p class="subtle">${place.nameHi} · ${place.state}</p></div>
+            <p style="font-family:var(--display);font-size:2rem;margin:0" class="num">${b ? Math.round(b.current.temp) : "—"}°</p>
+          </div>
+          <p class="muted">${b ? VAANI.rainClass(b.daily[0].precip).en + " · " + b.daily[0].precip.toFixed(0) + " mm" : "feed quiet"}</p>
+          <p>${w ? `<span class="chip alert">${w.title}</span>` : `<span class="chip">no derived warning</span>`}</p>
+          ${w ? `<p class="subtle" style="margin-top:.6rem">${w.verbatim.slice(0,180)}…</p>` : ""}
+        </article>`).join("");
+    })();
+  </script>
+</body>
+</html>
