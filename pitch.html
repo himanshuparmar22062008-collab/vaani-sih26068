@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>VAANI Pitch</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif&display=swap"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body data-page="Pitch">
+  <div id="site-nav"></div>
+  <main class="wrap" style="padding:1.2rem 0 3rem">
+    <div class="no-print" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.8rem">
+      <p class="subtle" id="pos">Pitch · 01 / 12</p>
+      <div class="row" style="margin:0">
+        <a class="btn ghost" href="brief.html">Script</a>
+        <button class="btn ghost" id="prev">Prev</button>
+        <button class="btn" id="next">Next</button>
+      </div>
+    </div>
+    <article class="slide" id="stage"></article>
+    <p class="muted no-print" id="note" style="margin-top:.8rem"></p>
+    <div class="dots no-print" id="dots"></div>
+    <p class="subtle no-print" style="text-align:center;margin-top:.8rem">Arrow keys · Space · then leave the deck and open Ask</p>
+  </main>
+  <div id="site-foot"></div>
+  <script src="js/ui.js"></script>
+  <script>
+    const SLIDES = [
+      { k:"SIH26068 · Ministry of Earth Sciences · Disaster Management", t:"VAANI", b:"The forecast that answers.\nThe warning that interrupts.", n:"Pause on the title. Then the problem." },
+      { k:"The last mile", t:"India already forecasts. People still cannot ask.", bullets:["Weather sits across Mausam, Nowcast, cyclone PDFs.","A farmer in Sehore needs one answer, in their language, warning first.","Chatbots that paraphrase a cyclone are a safety failure."], n:"Do not bash IMD. Attack last-mile access." },
+      { k:"The product thesis", t:"A language model wrapped around a weather API is the most common submission in this room.", b:"VAANI is not that. The warning is a first-class object. Quoted verbatim. Issue time, model, grid, confidence on screen. Climate is a memory, not a vibe.", n:"Say it slowly. Then go live." },
+      { k:"Ninety seconds", t:"The demo that wins the room.", bullets:["Ask in Hindi: सीहोर में अगले दो दिन बारिश होगी क्या?","Arm Judge demo. Labelled cyclone overlay interrupts.","Show slots, issue time, model, latency. Invite a judge to check IMD.","Climate: Bhopal versus 1991–2020 September normal."], n:"Leave the deck. Never fake a live IMD cyclone." },
+      { k:"Architecture", t:"Four layers. One contract: do not lie about weather.", bullets:["Understand — slots, gazetteer, Hindi or English.","Retrieve — live NWP + IMD rainfall / heat classes.","Guard — warning object is quoted, never softened.","Speak — template-faithful answer + optional voice."], n:"NWP is the physics. The LLM is only the voice." },
+      { k:"SIH26068 coverage", t:"Every line of the problem statement, owned.", bullets:["Natural language · NWP + location · Warnings verbatim","Climate normals · Voice hi-IN/en-IN · Push board"], n:"Tick this if a juror reads the PS aloud." },
+      { k:"How we expect to be scored", t:"The evaluation lines, mapped.", bullets:["Latency — milliseconds on every answer.","Multilingual — Hindi and English, detected.","Verifiable — judge checks Mausam.","Interrupt — banner before the forecast.","Voice — speak a village. Hear the answer.","Provenance — demo overlays stay labelled."], n:"Point at milliseconds on the live console." },
+      { k:"Why this, not Mausam", t:"Respect the official stack. Finish the last mile.", bullets:["Mausam: maps, not village-voice.","ChatGPT weather: fluent, will paraphrase a cyclone.","VAANI: ask in Hindi, warning first, source on screen."], n:"Say we are not replacing IMD." },
+      { k:"Feasibility", t:"Buildable in a college lab. Deployable to a district.", bullets:["Open NWP now. IMD APIs / WIS2.0 when credentials exist.","Bhashini on the same slot contract.","WhatsApp and 1090 IVR later. No GPU on the interrupt path."], n:"One district, not all of India." },
+      { k:"Ninety days", t:"From campus console to a district desk.", bullets:["0–30 this product.","30–60 official pipes.","60–90 Sehore / Bhopal control room."], n:"First years get asked: can you ship?" },
+      { k:"Impact", t:"Preparedness is a sentence, not a portal.", bullets:["Farmer spray window in the village name they use.","Duty officer hears the warning before small talk.","Fisher gets sea-area language.","Campus can ask the sky the way Sehore can."], n:"Close on people, not models." },
+      { k:"Team VAANI · IISER Bhopal · B.Tech EECS", t:"Ask it. Interrupt it. Verify it.", b:"Live product → Ask. National board → Alerts. Climate → the missing word in the title.\nThank you. Questions.", n:"Hands off. Offer the Hindi demo again." }
+    ];
+    let i = 0;
+    const stage = document.getElementById("stage");
+    function render() {
+      const s = SLIDES[i];
+      document.getElementById("pos").textContent = `Pitch · ${String(i+1).padStart(2,"0")} / ${String(SLIDES.length).padStart(2,"0")}`;
+      document.getElementById("note").textContent = s.n;
+      stage.innerHTML = `<p class="kicker">${s.k}</p>
+        <div><h2>${s.t}</h2>${s.b ? `<p class="muted" style="white-space:pre-line;font-size:1.15rem">${s.b}</p>` : ""}
+        ${s.bullets ? `<ul style="color:var(--fg);line-height:1.55">${s.bullets.map(x=>`<li>${x}</li>`).join("")}</ul>` : ""}</div>
+        <p class="subtle">VAANI · SIH26068 · IISER Bhopal</p>`;
+      document.getElementById("dots").innerHTML = SLIDES.map((_,n)=>`<button class="${n===i?"on":""}" data-i="${n}"></button>`).join("");
+      document.querySelectorAll("#dots button").forEach(b => b.onclick = () => { i = +b.dataset.i; render(); });
+    }
+    document.getElementById("prev").onclick = () => { i = Math.max(0, i-1); render(); };
+    document.getElementById("next").onclick = () => { i = Math.min(SLIDES.length-1, i+1); render(); };
+    window.onkeydown = (e) => {
+      if (["ArrowRight"," ","PageDown"].includes(e.key)) { e.preventDefault(); i = Math.min(SLIDES.length-1, i+1); render(); }
+      if (["ArrowLeft","PageUp"].includes(e.key)) { e.preventDefault(); i = Math.max(0, i-1); render(); }
+    };
+    render();
+  </script>
+</body>
+</html>

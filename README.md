@@ -3,20 +3,26 @@
 **The forecast that answers. The warning that interrupts.**
 
 Team VAANI · IISER Bhopal · B.Tech EECS  
-Problem: SIH26068 · Ministry of Earth Sciences · Disaster Management
+Problem: SIH26068 · Ministry of Earth Sciences · Disaster Management  
+Title: *WeatherGPT: Conversational AI for Weather Forecasting, Alerts, and Climate Information*
 
-Live site (after you turn on Pages):  
+Live site (after you turn on Pages — 60 seconds, see HOWTO-GITHUB.md):  
 https://himanshuparmar22062008-collab.github.io/vaani-sih26068/
+
+Judge demo:  
+https://himanshuparmar22062008-collab.github.io/vaani-sih26068/ask.html?demo=1&lang=hi
 
 Repository:  
 https://github.com/himanshuparmar22062008-collab/vaani-sih26068
+
+**First time with GitHub?** Open [HOWTO-GITHUB.md](HOWTO-GITHUB.md). Flip Settings → Pages on before anything else.
 
 ## What this is
 
 A warning-first conversational weather assistant for India.
 
 - Ask in Hindi or English (type or speak)
-- Live forecast from Open-Meteo
+- Live forecast from Open-Meteo, MET Norway fallback
 - Official-style warnings quoted **verbatim** before the routine answer
 - Judge-demo cyclone overlay is **labelled** — never faked as live IMD
 - Climate is treated as a thirty-year memory, not a vibe
@@ -41,9 +47,7 @@ This is a static site so a first-year team can put it on GitHub Pages with no se
 1. Open the repo on GitHub.
 2. Click **Settings**.
 3. Left sidebar → **Pages**.
-4. Under **Build and deployment**:
-   - Source: **GitHub Actions** (already set if the workflow ran),
-     or Source: **Deploy from a branch** → Branch **main** → folder **/ (root)** → Save.
+4. Source: **Deploy from a branch** → Branch **main** → folder **/ (root)** → Save.
 5. Wait one minute. Open  
    `https://himanshuparmar22062008-collab.github.io/vaani-sih26068/`
 
@@ -94,12 +98,13 @@ Do not claim the cyclone is live.
 
 - 6 members, same institute
 - At least one woman
-- Fill names before you walk in
+- Fill names on `brief.html` / the pitch before you walk in
 
 ## Stack
 
 - Static HTML / CSS / JS
 - Open-Meteo forecast API (browser, no key)
+- MET Norway locationforecast fallback
 - Web Speech API (`hi-IN` / `en-IN`)
 - IMD rainfall intensity classes on derived warnings
 

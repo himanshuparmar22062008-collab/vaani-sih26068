@@ -27,6 +27,7 @@
           <a class="btn ghost" href="pitch.html">Present the pitch</a>
         </div>
         <p class="subtle" style="margin-top:1.2rem">Team VAANI · IISER Bhopal · B.Tech EECS, first year</p>
+        <p class="subtle">Repo: github.com/himanshuparmar22062008-collab/vaani-sih26068</p>
       </div>
       <aside>
         <div class="card" id="campus">
@@ -41,6 +42,7 @@
         </div>
       </aside>
     </section>
+
     <section class="band">
       <div class="wrap" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;padding:1.1rem 0">
         <div>
@@ -54,6 +56,7 @@
         </div>
       </div>
     </section>
+
     <section class="wrap">
       <p class="kicker">The last mile</p>
       <h2 style="font-size:2.2rem;max-width:40rem">India already forecasts. People still cannot ask.</h2>
@@ -78,9 +81,9 @@
           <div style="display:flex;justify-content:space-between;align-items:end;margin-top:.7rem">
             <div><p style="font-family:var(--display);font-size:1.5rem;margin:0">${place.name}</p>
             <p class="muted">${b.daily[0] ? VAANI.rainClass(b.daily[0].precip).en : ""}</p></div>
-            <p style="font-family:var(--display);font-size:3rem;margin:0" class="num">${Math.round(b.current.temp)}\u00b0</p>
+            <p style="font-family:var(--display);font-size:3rem;margin:0" class="num">${Math.round(b.current.temp)}°</p>
           </div>
-          <p class="mono muted" style="margin-top:1rem">${Math.round(b.current.humidity)}% RH \u00b7 ${Math.round(b.current.wind)} km/h \u00b7 today ${b.daily[0] ? b.daily[0].precip.toFixed(0) : "\u2014"} mm</p>
+          <p class="mono muted" style="margin-top:1rem">${Math.round(b.current.humidity)}% RH · ${Math.round(b.current.wind)} km/h · today ${b.daily[0] ? b.daily[0].precip.toFixed(0) : "—"} mm</p>
           <p class="subtle" style="margin-top:.6rem">${b.model}</p>`;
       } catch (e) {
         el.innerHTML = `<p class="kicker">Live at campus</p><p class="muted">Forecast feed is quiet. Open Ask anyway.</p>`;
