@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>VAANI System</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif&display=swap"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body data-page="System">
+  <div id="site-nav"></div>
+  <main class="wrap" style="padding:2.4rem 0 3.5rem">
+    <p class="kicker">Architecture · SIH26068</p>
+    <h1 style="font-size:2.4rem;max-width:36rem">Four layers. One contract: do not lie about weather.</h1>
+    <div class="grid g4" style="margin-top:1.6rem">
+      <article class="card"><p class="mono" style="color:var(--accent)">01</p><h3>Understand</h3><p class="muted">Slots, gazetteer, Hindi or English.</p></article>
+      <article class="card"><p class="mono" style="color:var(--accent)">02</p><h3>Retrieve</h3><p class="muted">Live NWP + IMD rainfall and heat classes.</p></article>
+      <article class="card"><p class="mono" style="color:var(--accent)">03</p><h3>Guard</h3><p class="muted">A warning is quoted. Never softened.</p></article>
+      <article class="card"><p class="mono" style="color:var(--accent)">04</p><h3>Speak</h3><p class="muted">Template-faithful answer, optional voice.</p></article>
+    </div>
+    <div class="card" style="margin-top:1.6rem;overflow:auto">
+      <table>
+        <thead><tr><th>PS requirement</th><th>VAANI</th></tr></thead>
+        <tbody>
+          <tr><td class="muted">Natural language</td><td>Hindi / English slot extractor</td></tr>
+          <tr><td class="muted">Location / time / variable</td><td>Visible chips, campus gazetteer</td></tr>
+          <tr><td class="muted">Live NWP</td><td>Open-Meteo current + 7-day, MET Norway fallback</td></tr>
+          <tr><td class="muted">Warning interrupt</td><td>Verbatim banner before forecast</td></tr>
+          <tr><td class="muted">Climate</td><td>1991–2020-style normals</td></tr>
+          <tr><td class="muted">Voice</td><td>hi-IN / en-IN Web Speech</td></tr>
+          <tr><td class="muted">Latency</td><td>Milliseconds printed on every answer</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h2 style="margin-top:2.4rem">How to put this online</h2>
+    <p class="muted">This folder is a static site. No server, no API keys. GitHub Pages can host it for free. Read HOWTO-GITHUB.md in the repository.</p>
+    <div class="row">
+      <a class="btn" href="https://github.com/himanshuparmar22062008-collab/vaani-sih26068" target="_blank" rel="noreferrer">GitHub repo</a>
+      <a class="btn ghost" href="brief.html">Speaker script</a>
+    </div>
+  </main>
+  <div id="site-foot"></div>
+  <script src="js/ui.js"></script>
+</body>
+</html>
